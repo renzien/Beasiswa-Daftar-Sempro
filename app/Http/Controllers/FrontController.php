@@ -18,17 +18,14 @@ class FrontController extends Controller
 
     public function daftar_beasiswa()
     {
-        $ipk = rand(20,40);
-        $ipk /= 10;
-
-        return view("daftar_beasiswa", compact('ipk'));
+        return view("daftar_beasiswa");
     }
 
     public function simpan_data_pendaftaran(Request $req)
     {
         $req->validate([
             'nama'=> 'required',
-            'email'=> 'required|unique:App\Models\Beasiswa,email',
+            'email'=> 'required',
             'nomor_hp'=> 'required|numeric',
             'semester'=> 'required|numeric',
             'ipk'=> 'required',
@@ -39,7 +36,6 @@ class FrontController extends Controller
         [
             'nama.required'=> 'Kolom nama wajib diisi.',
             'email.required'=> 'Kolom "email" wajib diisi.',
-            'email.unique'=> 'Nomor "email" sudah digunakan.',
             'nomor_hp.required'=> 'Kolom "Nomor HP" wajib diisi.',
             'nomor_hp.numeric'=> 'Kolom "Nomor HP" wajib bernilai angka.',
             'semester.required'=> 'Kolom "semester" wajib diisi.',
@@ -80,11 +76,28 @@ class FrontController extends Controller
 
     public function hasil()
     {
-        $beasiswa = DB::table('beasiswa')
-                    ->get();
+        $beasiswa = [
+            'Beasiswa Akademik',
+            'Beasiswa Non Akademik',
+            'Beasiswa Seni'
+        ];
 
+        $beasiswaCounts = [
+            'Beasiswa Akademik' => 0,
+            'Beasiswa Non Akademik' => 0,
+            'Beasiswa Seni' => 0
+        ];
+
+        foreach($beasiswa as $b) {
+            $data = Beasiswa::where('beasiswa', $b)->count();
+            $beasiswaCounts[$b] += $data;
+        }
+
+        // dd($beasiswaCounts);
+
+        $beasiswa = Beasiswa::where('beasiswa', '!=', '')-> get();
         $empty = count($beasiswa);
 
-        return view("hasil", compact("beasiswa", "empty"));
+        return view("hasil", compact("beasiswa", "empty", "beasiswaCounts"));
     }
 }

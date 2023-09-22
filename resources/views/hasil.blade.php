@@ -1,6 +1,38 @@
 @extends('layouts.landing')
 @section('title', 'Hasil')
 @section('content')
+    <!-- Pie Chart -->
+    <div style="width: 100%; margin-top: 5px; display: flex; justify-content: center;">
+        <div class="width: 25%">
+            <canvas id="beasiswaChart"></canvas>
+        </div>
+    </div>
+
+    @push('scripts')
+    <!-- Import Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var beasiswaData = {{ json_encode(array_values($beasiswaCounts)) }};
+        var beasiswaLabels = [
+            'Beasiswa Akademik',
+            'Beasiswa Non Akademik',
+            'Beasiswa Seni'
+        ];
+
+        var ctx = document.getElementById('beasiswaChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: beasiswaLabels,
+                datasets: [{
+                    data: beasiswaData,
+                    backgroundColor: ['#007bff', '#28a745', '#333333'],
+                }],
+            }
+        });
+    </script>
+    @endpush
+
     <h2 class="text-center mt-5">List Hasil Peserta Beasiswa:</h2>
     <div class="card m-5">
         <div class="card-header">
